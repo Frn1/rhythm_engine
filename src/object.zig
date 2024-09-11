@@ -7,7 +7,7 @@ const State = @import("state.zig");
 fn emptyDestroy(_: @This(), _: std.mem.Allocator) void {}
 fn emptyProcess(_: @This(), _: *State) void {}
 
-pub const Time = f80;
+pub const Time = f64;
 pub const Position = f32;
 
 /// Rhythmic time that the object would be hit at

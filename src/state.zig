@@ -54,7 +54,7 @@ pub inline fn calculateVisualPosition(self: @This(), beat: Time) Position {
 /// Inverse operation of `convertSecondsToBeats`.
 ///
 /// **(It can only guarantee accuracy from the last object until the next object)**
-pub inline fn convertBeatToSeconds(self: @This(), beats: f80) f80 {
+pub inline fn convertBeatToSeconds(self: @This(), beats: Time) Time {
     if (self.seconds_per_beat < 0 or !std.math.isNormal(self.seconds_per_beat)) {
         return self.seconds_offset;
     }
@@ -82,7 +82,7 @@ pub inline fn convertSecondsToBeats(self: @This(), seconds: Time) Time {
 }
 
 /// Process objects and update
-pub fn update(self: *@This(), conductor: Conductor, current_seconds: Time, is_audio_thread: bool) void {
+pub fn update(self: *@This(), conductor: Conductor, current_seconds: Time) void {
     self.updateBeat(current_seconds);
     for (conductor.objects[self.next_object_to_process..], self.next_object_to_process..) |object, i| {
         if (self.beat < object.beat) {
@@ -90,9 +90,6 @@ pub fn update(self: *@This(), conductor: Conductor, current_seconds: Time, is_au
         }
         self.next_object_to_process = i + 1;
         object.process(object, self);
-        if (is_audio_thread) {
-            object.processAudio(object);
-        }
         self.updateBeat(current_seconds);
     }
 }
